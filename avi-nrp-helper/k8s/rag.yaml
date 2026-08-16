@@ -1,0 +1,148 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: avi-nrp-helper
+  namespace: rehs-2026-chatbot
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: avi-nrp-helper-role
+  namespace: rehs-2026-chatbot
+rules:
+  - apiGroups: [""]
+    resources:
+      - pods
+    verbs:
+      - get
+      - list
+
+  - apiGroups: [""]
+    resources:
+      - pods/log
+    verbs:
+      - get
+
+  - apiGroups: ["apps"]
+    resources:
+      - deployments
+    verbs:
+      - get
+      - list
+
+  - apiGroups: ["apps"]
+    resources:
+      - deployments/scale
+    verbs:
+      - get
+      - patch
+      - update
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: avi-nrp-helper-binding
+  namespace: rehs-2026-chatbot
+subjects:
+  - kind: ServiceAccount
+    name: avi-nrp-helper
+    namespace: rehs-2026-chatbot
+roleRef:
+  kind: Role
+  name: avi-nrp-helper-role
+  apiGroup: rbac.authorization.k8s.io
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: avi-nrp-helper
+  namespace: rehs-2026-chatbot
+  labels: {app: avi-nrp-helper}
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app: avi-nrp-helper}
+  template:
+    metadata:
+      labels: {app: avi-nrp-helper}
+    spec:
+      serviceAccountName: avi-nrp-helper
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: kubernetes.io/hostname
+                    operator: NotIn
+                    values:
+                      - node-2-9.sdsc.optiputer.net
+      containers:
+        - name: streamlit
+          image: aviatharvanand/nrp-helper:v9
+          imagePullPolicy: Always
+
+          ports:
+            - containerPort: 8501
+
+          env:
+            - name: NRP_LLM_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: nrp-llm-token
+                  key: NRP_LLM_TOKEN
+
+            - name: NRP_LLM_BASE_URL
+              value: https://ellm.nrp-nautilus.io/v1
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "512Mi"
+            limits:
+              cpu: "1"
+              memory: "1Gi"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: avi-nrp-helper
+  namespace: rehs-2026-chatbot
+
+spec:
+  selector:
+    app: avi-nrp-helper
+
+  ports:
+    - port: 80
+      targetPort: 8501
+      protocol: TCP
+
+  type: ClusterIP
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: avi-nrp-helper
+  namespace: rehs-2026-chatbot
+
+spec:
+  ingressClassName: haproxy
+
+  tls:
+    - hosts:
+        - avi-nrp-helper.nrp-nautilus.io
+  rules:
+    - host: avi-nrp-helper.nrp-nautilus.io
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: avi-nrp-helper
+                port:
+                  number: 80

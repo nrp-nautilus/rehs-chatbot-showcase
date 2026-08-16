@@ -1,0 +1,80 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: avi-recycle-helper
+  namespace: rehs-2026-chatbot
+  labels: {app: avi-recycle-helper}
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app: avi-recycle-helper}
+  template:
+    metadata:
+      labels: {app: avi-recycle-helper}
+    spec:
+      containers:
+        - name: streamlit
+          image: aviatharvanand/recycle-helper:latest
+          imagePullPolicy: Always
+
+          ports:
+            - containerPort: 8501
+
+          env:
+            - name: NRP_LLM_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: nrp-llm-token
+                  key: NRP_LLM_TOKEN
+
+            - name: NRP_LLM_BASE_URL
+              value: https://ellm.nrp-nautilus.io/v1
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "512Mi"
+            limits:
+              cpu: "1"
+              memory: "1Gi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: avi-recycle-helper
+  namespace: rehs-2026-chatbot
+
+spec:
+  selector:
+    app: avi-recycle-helper
+
+  ports:
+    - port: 80
+      targetPort: 8501
+      protocol: TCP
+
+  type: ClusterIP
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: avi-recycle-helper
+  namespace: rehs-2026-chatbot
+
+spec:
+  ingressClassName: haproxy
+
+  tls:
+    - hosts:
+        - avi-recycle-helper.nrp-nautilus.io
+  rules:
+    - host: avi-recycle-helper.nrp-nautilus.io
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: avi-recycle-helper
+                port:
+                  number: 80
