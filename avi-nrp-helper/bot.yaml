@@ -1,0 +1,45 @@
+name: Avi's NRP Helper
+
+tagline: An AI assistant that helps users understand and troubleshoot the National Research Platform by answering questions from its documentation.
+
+kind: solo
+year: 2026
+
+authors:
+  - name: Avi Atharv Anand
+    github: AviAtharvAnand
+
+role: Built the documentation ingest and retrieval pipeline, the Streamlit RAG application, Kubernetes command tools, and the Kubernetes deployment.
+
+learned: >
+  I learned that getting a RAG chatbot to give useful answers depended much 
+  more on retrieval quality than I expected. I spent a lot of time changing 
+  how queries were rewritten and results were ranked because the closest vector 
+  match was not always the most useful documentation. Kubernetes was also less 
+  forgiving than local development: small mistakes in service accounts, RBAC, 
+  container images, or environment variables could keep the whole application 
+  from working.
+
+tech: [Streamlit, ChromaDB, NRP LLM(qwen3-small and qwen3-embeddings), Kubernetes, Python]
+
+highlights: >
+  - I split the NRP documentation into 2000-character chunks with 400-character 
+    overlap so each retrieved passage kept enough surrounding context without 
+    making the prompt unnecessarily large.
+    
+  - I moved beyond raw vector similarity by rewriting user questions and reranking 
+    retrieved documentation using title and text matches, which made specific NRP 
+    questions retrieve more relevant pages.
+    
+  - I separated Kubernetes commands from normal documentation questions instead of 
+    asking the language model to interpret everything, so commands such as listing pods, 
+    checking deployments, and viewing logs could return live cluster information.
+    
+  - I gave the deployed bot its own Kubernetes ServiceAccount and RBAC permissions 
+    rather than giving it unrestricted cluster access, and debugged permission failures 
+    until the in-pod Kubernetes tools worked.
+
+screenshot: screenshot.png
+    
+                                                                                                                              
+                                                                                                                              script creates with help from chatGPT

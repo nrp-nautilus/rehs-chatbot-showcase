@@ -1,0 +1,5 @@
+,Pass,Fail,Accuracy
+Simple Single-Part Questions,62,3,95%
+Simple Multi-Part Questions,8,2,80%
+Complex Questions,7,3,70%
+Negative Scenario Questions,10,0,100%

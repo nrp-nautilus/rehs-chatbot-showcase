@@ -1,0 +1,32 @@
+name: Avi's Recycling Chatbot
+tagline: A retrieval augmented AI chatbot dedicated to assisting in recycling literacy.
+
+kind: solo
+year: 2026
+
+authors:
+  - name: Avi Atharv Anand
+    github: AviAtharvAnand
+    role: Built the API call, Streamlit interface, k8s Deployment/Service/Ingress, RAG function, and Chromadb vector database.
+    learned: >
+      This summer taught me how to create basic chatbots premade LLMs. 
+      The most important thing I learned was how to use RAG 
+      to improve the results of a chatbot and prevent hallucinations.
+
+tech: [Streamlit, ChromaDB, NRP LLM (qwen3-small & qwen3-embedding), Kubernetes, Python]
+
+highlights: >
+  - I tried adding functions to edit the query making it more precise 
+    by removing redundant words and phrases. This makes 
+    the query more compatible with the search function.
+
+  - I tried changing the chunk distancing by adding a 
+    reranking function that subtracts distances from chunks 
+    if the have matching words with the query, resulting 
+    in more accurate retrievals.
+    
+  - The search function would not understand previous context. 
+    I solved this by adding a function that combined previous 
+    queries to created a compatible query for the search function.
+
+screenshot: image.png
