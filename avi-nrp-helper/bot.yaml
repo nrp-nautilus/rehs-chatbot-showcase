@@ -8,17 +8,15 @@ year: 2026
 authors:
   - name: Avi Atharv Anand
     github: AviAtharvAnand
-
-role: Built the documentation ingest and retrieval pipeline, the Streamlit RAG application, Kubernetes command tools, and the Kubernetes deployment.
-
-learned: >
-  I learned that getting a RAG chatbot to give useful answers depended much 
-  more on retrieval quality than I expected. I spent a lot of time changing 
-  how queries were rewritten and results were ranked because the closest vector 
-  match was not always the most useful documentation. Kubernetes was also less 
-  forgiving than local development: small mistakes in service accounts, RBAC, 
-  container images, or environment variables could keep the whole application 
-  from working.
+    role: Built the documentation ingest and retrieval pipeline, the Streamlit RAG application, Kubernetes command tools, and the Kubernetes deployment.
+    learned: >
+      I learned that getting a RAG chatbot to give useful answers depended much
+      more on retrieval quality than I expected. I spent a lot of time changing
+      how queries were rewritten and results were ranked because the closest vector
+      match was not always the most useful documentation. Kubernetes was also less
+      forgiving than local development: small mistakes in service accounts, RBAC,
+      container images, or environment variables could keep the whole application
+      from working.
 
 tech: [Streamlit, ChromaDB, NRP LLM(qwen3-small and qwen3-embeddings), Kubernetes, Python]
 
@@ -40,6 +38,5 @@ highlights: >
     until the in-pod Kubernetes tools worked.
 
 screenshot: screenshot.png
-    
-                                                                                                                              
-                                                                                                                              script creates with help from chatGPT
+
+# script creates with help from chatGPT

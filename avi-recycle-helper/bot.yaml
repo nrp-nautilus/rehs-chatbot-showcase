@@ -29,4 +29,4 @@ highlights: >
     I solved this by adding a function that combined previous 
     queries to created a compatible query for the search function.
 
-screenshot: image.png
+screenshot: bot_performance/image.png
